@@ -5,7 +5,7 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import kotlin.system.measureTimeMillis
 
-internal class BruteForceAlgorithmTest {
+internal class RandomGuessCombinedAlgorithmTest {
 
   @ParameterizedTest
   @MethodSource("difficultExamples")
@@ -14,7 +14,7 @@ internal class BruteForceAlgorithmTest {
     try {
       val compositeAlgorithm =
         CompositeAlgorithm(sudoku, setOf(NakedSingleCellAlgorithm(sudoku), HiddenSingleCellAlgorithm(sudoku)))
-      val algo = BruteForceAlgorithm(sudoku, compositeAlgorithm)
+      val algo = RandomGuessCombinedAlgorithm(sudoku, compositeAlgorithm)
 
       val time = measureTimeMillis {
         algo.trySolve()

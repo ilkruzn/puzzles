@@ -2,7 +2,7 @@ package uk.co.inops.sudoku
 
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContain
-import io.kotest.matchers.collections.shouldContainExactly
+import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import org.junit.jupiter.api.Test
@@ -69,7 +69,7 @@ internal class SudokuTests {
 
     for (row in sudoku.rows) {
       for (cell in row) {
-        cell.possibleValues.shouldContainExactly(expectedPossibleValues)
+        cell.possibleValues shouldContainExactlyInAnyOrder expectedPossibleValues
       }
     }
   }
@@ -97,7 +97,7 @@ internal class SudokuTests {
     modifiedCell.value = cellNewValue
 
     while (nextCell != modifiedCell) {
-      nextCell.possibleValues.shouldContainExactly(expectedPossibleValues)
+      nextCell.possibleValues shouldContainExactlyInAnyOrder expectedPossibleValues
       nextCell = nextCell.right
     }
   }
@@ -112,9 +112,10 @@ internal class SudokuTests {
     val modifiedCell = sudoku.rows[0][0]
     modifiedCell.value = cellNewValue
 
-    sudoku.rows[3][1].possibleValues.shouldContainExactly(expectedPossibleValues)
-    sudoku.rows[size - 1][2].possibleValues.shouldContainExactly(expectedPossibleValues)
-    sudoku.rows[size - 1][size - 1].possibleValues.shouldContainExactly(expectedPossibleValues)
+    sudoku.rows[3][1].possibleValues shouldContainExactlyInAnyOrder expectedPossibleValues
+    sudoku.rows[size - 1][2].possibleValues shouldContainExactlyInAnyOrder expectedPossibleValues
+    sudoku.rows[size - 1][size - 1].possibleValues shouldContainExactlyInAnyOrder expectedPossibleValues
+
   }
 
   @Test
@@ -129,7 +130,7 @@ internal class SudokuTests {
     modifiedCell.value = cellNewValue
 
     while (nextCell != modifiedCell) {
-      nextCell.possibleValues.shouldContainExactly(expectedPossibleValues)
+      nextCell.possibleValues shouldContainExactlyInAnyOrder expectedPossibleValues
       nextCell = nextCell.down
     }
   }
@@ -144,9 +145,9 @@ internal class SudokuTests {
     val modifiedCell = sudoku.rows[0][0]
     modifiedCell.value = cellNewValue
 
-    sudoku.rows[1][3].possibleValues.shouldContainExactly(expectedPossibleValues)
-    sudoku.rows[2][size - 1].possibleValues.shouldContainExactly(expectedPossibleValues)
-    sudoku.rows[size - 1][size - 1].possibleValues.shouldContainExactly(expectedPossibleValues)
+    sudoku.rows[1][3].possibleValues shouldContainExactlyInAnyOrder expectedPossibleValues
+    sudoku.rows[2][size - 1].possibleValues shouldContainExactlyInAnyOrder expectedPossibleValues
+    sudoku.rows[size - 1][size - 1].possibleValues shouldContainExactlyInAnyOrder expectedPossibleValues
   }
 
   @Test
@@ -161,7 +162,7 @@ internal class SudokuTests {
     modifiedCell.value = cellNewValue
 
     while (nextCell != modifiedCell) {
-      nextCell.possibleValues.shouldContainExactly(expectedPossibleValues)
+      nextCell.possibleValues shouldContainExactlyInAnyOrder expectedPossibleValues
       nextCell = nextCell.boxNext
     }
   }
@@ -184,7 +185,7 @@ internal class SudokuTests {
     // neighbors in the same row, column and box.
     // all empty cells in the same row, column and box with the one reset to zero must be updated
     // so that number is 4 removed from their possible values
-    cellToReset.possibleValues shouldBe (4..9).toList()
+    cellToReset.possibleValues shouldContainExactlyInAnyOrder (4..9).toList()
 
     var rowNext = cellToReset.right
     var columnNext = cellToReset.down
@@ -217,6 +218,7 @@ internal class SudokuTests {
 
     sudoku.solvedCount shouldBe 3
   }
+
   @Test
   fun setValueDoesNotIncrementsSolvedCountIfPreviousValueIsNotZero() {
     val sudoku = Sudoku(9)

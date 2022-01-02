@@ -6,7 +6,7 @@ class NakedSingleCellAlgorithm(private val sudoku: Sudoku) : Algorithm {
     do {
       val currentSolvedCount = sudoku.solvedCount
 
-      //try to find a cell with only 1 possible value and set the value to it
+      //try to find a cell with only 1 possible value and set its value to that
       for (row in sudoku.rows) {
         for (cell in row) {
           if (cell.possibleValues.size == 1) {

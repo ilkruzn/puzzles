@@ -3,7 +3,7 @@ package uk.co.inops.sudoku
 import java.util.Deque
 import kotlin.random.Random
 
-class BruteForceAlgorithm(
+class RandomGuessCombinedAlgorithm(
   private val sudoku: Sudoku,
   private val helperAlgorithm: Algorithm
 ) {
@@ -50,13 +50,11 @@ class BruteForceAlgorithm(
   }
 
   private fun rollback() {
-    //println("Guess size ${guessedCells.size}")
     if (sudoku.hasHistory()) {
       val history = sudoku.endHistory()
       while (history.isNotEmpty()) {
         history.pop().also {
           it.reset()
-          //println("Reset cell [${it.row}, ${it.col}] to ${it.value}. Possible values: ${it.possibleValues} and index: ${it.currentGuessIndex}")
         }
       }
     }
@@ -96,13 +94,14 @@ class BruteForceAlgorithm(
         }
       }
       .sortedBy { it.possibleValues.size - it.currentGuessIndex }
+      .take(3)
 
     if (allEmptyCells.isEmpty()) {
       return null
     }
 
-//    val emptyCell = allEmptyCells[0]
-    val emptyCell = allEmptyCells[Random.nextInt(0, 3.coerceAtMost(allEmptyCells.size))]
+
+    val emptyCell = allEmptyCells[Random.nextInt(allEmptyCells.size)]
 
     return emptyCell.also {
       it.currentGuessIndex++

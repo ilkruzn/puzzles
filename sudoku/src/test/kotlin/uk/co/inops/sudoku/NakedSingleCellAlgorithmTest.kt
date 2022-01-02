@@ -5,7 +5,7 @@ import io.kotest.matchers.shouldNotBe
 import org.junit.jupiter.api.Test
 
 
-internal class SimpleAlgorithm1Test {
+internal class NakedSingleCellAlgorithmTest {
 
   @Test
   fun canFindACellWithOnePossibleValueAndSet() {
