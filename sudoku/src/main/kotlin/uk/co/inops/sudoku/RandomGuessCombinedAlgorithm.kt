@@ -6,12 +6,13 @@ import kotlin.random.Random
 class RandomGuessCombinedAlgorithm(
   private val sudoku: Sudoku,
   private val helperAlgorithm: Algorithm
-) {
+) : Algorithm {
 
   private val guessedCells: Deque<Cell> = java.util.ArrayDeque()
 
-  fun trySolve(): Boolean {
+  override fun trySolve(): Boolean {
     var i = 0
+    var guessCount = 0
     while (!sudoku.hasBeenSolved() && i++ < 100000) {
       helperAlgorithm.trySolve()
       if (sudoku.hasBeenSolved()) {
@@ -33,6 +34,7 @@ class RandomGuessCombinedAlgorithm(
         val value = currentCell.possibleValues.elementAt(currentCell.currentGuessIndex)
 //        println("Guessing number $value in cell [${currentCell.row}, ${currentCell.col}]. Possible values: ${currentCell.possibleValues}, index: ${currentCell.currentGuessIndex}")
         sudoku.set(currentCell.row, currentCell.col, value)
+        guessCount++
 
         if (sudoku.hasConflict) {
           //println("Rolling back after conflict. Current cells solved: ${sudoku.solvedCount}")
@@ -45,7 +47,7 @@ class RandomGuessCombinedAlgorithm(
     }
 
     println("Solved in $i iterations")
-
+    println("Guess count: $guessCount")
     return true
   }
 
