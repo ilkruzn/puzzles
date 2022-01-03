@@ -24,7 +24,7 @@ class Cell(val row: Int, val col: Int, private val sudoku: Sudoku) {
     sudoku.rows[nextRow][nextCol]
   }
 
-  private val initialPossibleValues = (1..sudoku.size)
+  private val initialPossibleValues = (1..sudoku.size).shuffled()
   val possibleValues: MutableSet<Int> by lazy { initialPossibleValues.toMutableSet() }
   internal var value: Int = 0
     set(value) {
