@@ -30,7 +30,7 @@ class RandomGuessCombinedAlgorithm(
           continue
         }
 
-        saveState()
+        sudoku.beginHistory()
         val value = currentCell.possibleValues.elementAt(currentCell.currentGuessIndex)
 //        println("Guessing number $value in cell [${currentCell.row}, ${currentCell.col}]. Possible values: ${currentCell.possibleValues}, index: ${currentCell.currentGuessIndex}")
         sudoku.set(currentCell.row, currentCell.col, value)
@@ -52,14 +52,12 @@ class RandomGuessCombinedAlgorithm(
   }
 
   private fun rollback() {
-    if (sudoku.hasHistory()) {
       val history = sudoku.endHistory()
       while (history.isNotEmpty()) {
         history.pop().also {
           it.reset()
         }
       }
-    }
 
     if (guessedCells.size > 0) {
       val lastGuessedCell = guessedCells.peek()
@@ -72,10 +70,6 @@ class RandomGuessCombinedAlgorithm(
     }
 
     sudoku.hasConflict = false
-  }
-
-  private fun saveState() {
-    sudoku.beginHistory()
   }
 
   private fun getCellToGuess(conflict: Boolean): Cell? {
@@ -101,7 +95,6 @@ class RandomGuessCombinedAlgorithm(
     if (allEmptyCells.isEmpty()) {
       return null
     }
-
 
     val emptyCell = allEmptyCells[Random.nextInt(allEmptyCells.size)]
 

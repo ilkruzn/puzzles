@@ -43,6 +43,34 @@ class Sudoku(
 
   fun hasHistory() = history.isNotEmpty()
 
+  val columns: List<List<Cell>> by lazy {
+
+    (0 until size).map { j ->
+      val column = mutableListOf<Cell>()
+      val top = rows[0][j]
+      var current = top
+      do {
+        column.add(current)
+        current = current.down
+      } while (top != current)
+      column
+    }
+  }
+
+  val boxes: List<List<Cell>> by lazy {
+    (0 until size).map { i ->
+      val box = mutableListOf<Cell>()
+      val top = rows[i / 3 * 3][i % 3 * 3] // top left cell of a box
+      var current = top
+      do {
+        box.add(current)
+        current = current.boxNext
+      } while (top != current)
+      box
+    }
+  }
+
+
   fun print() {
     for (row in rows) {
       for (cell in row) {
