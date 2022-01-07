@@ -36,7 +36,9 @@ class Sudoku(
     rows[row][col].value = value
 
     if (preAnalysis) {
-      this.preAnalysis.analyse(this)
+//      this.preAnalysis.analyse(this)
+      this.preAnalysis.analyseRow(this, row)
+      this.preAnalysis.analyseColumn(this, col)
     }
 
     if (history.isNotEmpty()) {

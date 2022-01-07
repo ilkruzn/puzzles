@@ -10,6 +10,18 @@ class HiddenPairPreAnalysis : PreAnalysis {
     }
   }
 
+  override fun analyseRow(sudoku: Sudoku, row: Int) {
+    analyse(sudoku.rows[row])
+  }
+
+  override fun analyseColumn(sudoku: Sudoku, column: Int) {
+    analyse(sudoku.columns[column])
+  }
+
+  override fun analyseBox(sudoku: Sudoku, box: Int) {
+    analyse(sudoku.boxes[box])
+  }
+
   private fun analyse(group: List<Cell>) {
     // this can be a method parameter, but seems like trying for did not make the overall resolution time any faster
     val pairCount = 2
