@@ -1,8 +1,10 @@
-package uk.co.inops.sudoku
+package uk.co.inops.sudoku.solvers
 
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import org.junit.jupiter.api.Test
+import uk.co.inops.sudoku.HiddenPairPreAnalysis
+import uk.co.inops.sudoku.Sudoku
 
 
 internal class NakedSingleCellAlgorithmTest {
@@ -21,10 +23,10 @@ internal class NakedSingleCellAlgorithmTest {
       listOf(0, 0, 0, 0, 0, 0, 0, 0, 0)
     )
 
-    val sudoku = Sudoku(example)
-    val algo = NakedSingleCellAlgorithm(sudoku)
+    val sudoku = Sudoku(example, HiddenPairPreAnalysis())
+    val algo = NakedSingleCellAlgorithm()
 
-    val solved = algo.trySolve()
+    val solved = algo.trySolve(sudoku)
 
     solved shouldBe false
     sudoku.rows[0][8].value shouldBe 9
@@ -45,13 +47,13 @@ internal class NakedSingleCellAlgorithmTest {
       listOf(9, 1, 2, 3, 4, 5, 6, 7, 0)
     )
 
-    val sudoku = Sudoku(example)
-    val algo = NakedSingleCellAlgorithm(sudoku)
+    val sudoku = Sudoku(example, HiddenPairPreAnalysis())
+    val algo = NakedSingleCellAlgorithm()
 
-    val solved = algo.trySolve()
+    val solved = algo.trySolve(sudoku)
 
     solved shouldBe true
-    for(row in sudoku.rows){
+    for (row in sudoku.rows) {
       row[8] shouldNotBe 0
     }
 

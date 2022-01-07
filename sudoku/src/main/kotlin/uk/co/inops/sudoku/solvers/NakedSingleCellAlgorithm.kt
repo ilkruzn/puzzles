@@ -1,8 +1,10 @@
-package uk.co.inops.sudoku
+package uk.co.inops.sudoku.solvers
 
-class NakedSingleCellAlgorithm(private val sudoku: Sudoku) : Algorithm {
+import uk.co.inops.sudoku.Sudoku
 
-  override fun trySolve(): Boolean {
+class NakedSingleCellAlgorithm() : Algorithm {
+
+  override fun trySolve(sudoku: Sudoku): Boolean {
     do {
       val currentSolvedCount = sudoku.solvedCount
 

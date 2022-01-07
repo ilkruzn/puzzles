@@ -12,7 +12,7 @@ internal class SudokuTests {
   @Test
   fun initialisesCells() {
     val size = 9
-    val sudoku = Sudoku(size)
+    val sudoku = Sudoku(size, HiddenPairPreAnalysis())
     sudoku.rows shouldNotBe null
     sudoku.rows.size shouldBe size
     for (row in sudoku.rows) {
@@ -23,7 +23,7 @@ internal class SudokuTests {
   @Test
   fun initialisesCellsWithRowNeighborhood() {
     val size = 9
-    val sudoku = Sudoku(size)
+    val sudoku = Sudoku(size, HiddenPairPreAnalysis())
 
     sudoku.rows[0][0].right shouldBe sudoku.rows[0][1]
     sudoku.rows[0][size - 1].right shouldBe sudoku.rows[0][0]
@@ -34,7 +34,7 @@ internal class SudokuTests {
   @Test
   fun initialisesCellsWithColumnNeighborhood() {
     val size = 9
-    val sudoku = Sudoku(size)
+    val sudoku = Sudoku(size, HiddenPairPreAnalysis())
 
     sudoku.rows[0][0].down shouldBe sudoku.rows[1][0]
     sudoku.rows[0][size - 1].down shouldBe sudoku.rows[1][size - 1]
@@ -45,7 +45,7 @@ internal class SudokuTests {
   @Test
   fun initialisesCellsWithBoxNeighborhood() {
     val size = 9
-    val sudoku = Sudoku(size)
+    val sudoku = Sudoku(size, HiddenPairPreAnalysis())
 
     sudoku.rows[0][0].boxNext shouldBe sudoku.rows[0][1]
     sudoku.rows[0][2].boxNext shouldBe sudoku.rows[1][0]
@@ -64,7 +64,7 @@ internal class SudokuTests {
   @Test
   fun initialisesAllCellsWithFullPossibleValues() {
     val size = 9
-    val sudoku = Sudoku(size)
+    val sudoku = Sudoku(size, HiddenPairPreAnalysis())
     val expectedPossibleValues = (1..size).toList()
 
     for (row in sudoku.rows) {
@@ -77,7 +77,7 @@ internal class SudokuTests {
   @Test
   fun setCellValuesClearsPossibleValues() {
     val size = 9
-    val sudoku = Sudoku(size)
+    val sudoku = Sudoku(size, HiddenPairPreAnalysis())
 
     sudoku.rows[6][5].value = 3
 
@@ -88,7 +88,7 @@ internal class SudokuTests {
   fun setCellValueRecalculatesPossibleValuesInRow() {
     val size = 9
     val cellNewValue = 5
-    val sudoku = Sudoku(size)
+    val sudoku = Sudoku(size, HiddenPairPreAnalysis())
 
     val expectedPossibleValues = (1..size).filter { it != cellNewValue }
     val modifiedCell = sudoku.rows[0][0]
@@ -106,7 +106,7 @@ internal class SudokuTests {
   fun setCellValueDoesNotRecalculateOtherRows() {
     val size = 9
     val cellNewValue = 5
-    val sudoku = Sudoku(size)
+    val sudoku = Sudoku(size, HiddenPairPreAnalysis())
 
     val expectedPossibleValues = (1..9).toList()
     val modifiedCell = sudoku.rows[0][0]
@@ -122,7 +122,7 @@ internal class SudokuTests {
   fun setCellValueRecalculatesPossibleValuesInColumn() {
     val size = 9
     val cellNewValue = 5
-    val sudoku = Sudoku(size)
+    val sudoku = Sudoku(size, HiddenPairPreAnalysis())
 
     val expectedPossibleValues = (1..size).filter { it != cellNewValue }
     val modifiedCell = sudoku.rows[size - 1][0]
@@ -139,7 +139,7 @@ internal class SudokuTests {
   fun setCellValueDoesNotRecalculateOtherColumns() {
     val size = 9
     val cellNewValue = 5
-    val sudoku = Sudoku(size)
+    val sudoku = Sudoku(size, HiddenPairPreAnalysis())
 
     val expectedPossibleValues = (1..9).toList()
     val modifiedCell = sudoku.rows[0][0]
@@ -154,7 +154,7 @@ internal class SudokuTests {
   fun setCellValueRecalculatesPossibleValuesInABox() {
     val size = 9
     val cellNewValue = 3
-    val sudoku = Sudoku(size)
+    val sudoku = Sudoku(size, HiddenPairPreAnalysis())
 
     val expectedPossibleValues = (1..size).filter { it != cellNewValue }
     val modifiedCell = sudoku.rows[4][4]
@@ -170,7 +170,7 @@ internal class SudokuTests {
   @Test
   fun resetCellValueRecalculatesPossibleValuesInSameCellRowColumnAndBox() {
     val size = 9
-    val sudoku = Sudoku(size)
+    val sudoku = Sudoku(size, HiddenPairPreAnalysis())
     val cellToReset = sudoku.rows[0][1]
 
     sudoku.rows[0][0].value = 1
@@ -211,7 +211,7 @@ internal class SudokuTests {
 
   @Test
   fun setValueIncrementsSolvedCount() {
-    val sudoku = Sudoku(9)
+    val sudoku = Sudoku(9, HiddenPairPreAnalysis())
     sudoku.rows[0][0].value = 5
     sudoku.rows[4][4].value = 3
     sudoku.rows[8][8].value = 9
@@ -221,7 +221,7 @@ internal class SudokuTests {
 
   @Test
   fun setValueDoesNotIncrementsSolvedCountIfPreviousValueIsNotZero() {
-    val sudoku = Sudoku(9)
+    val sudoku = Sudoku(9, HiddenPairPreAnalysis())
     sudoku.rows[0][0].value = 5
     sudoku.rows[4][4].value = 3
     sudoku.rows[8][8].value = 9
@@ -234,7 +234,7 @@ internal class SudokuTests {
 
   @Test
   fun resetValueDecrementsSolvedCount() {
-    val sudoku = Sudoku(9)
+    val sudoku = Sudoku(9, HiddenPairPreAnalysis())
     sudoku.rows[0][0].value = 5
     sudoku.rows[4][4].value = 3
     sudoku.rows[8][8].value = 9
@@ -249,7 +249,7 @@ internal class SudokuTests {
 
   @Test
   fun resetValueDoesNotDecrementsSolvedCountIfPreviousValueWasAlsoZero() {
-    val sudoku = Sudoku(9)
+    val sudoku = Sudoku(9, HiddenPairPreAnalysis())
     sudoku.rows[0][0].value = 5
     sudoku.rows[4][4].value = 3
     sudoku.rows[8][8].value = 9

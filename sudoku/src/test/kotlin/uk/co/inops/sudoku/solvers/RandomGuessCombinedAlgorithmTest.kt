@@ -1,8 +1,10 @@
-package uk.co.inops.sudoku
+package uk.co.inops.sudoku.solvers
 
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
+import uk.co.inops.sudoku.HiddenPairPreAnalysis
+import uk.co.inops.sudoku.Sudoku
 import kotlin.system.measureTimeMillis
 
 internal class RandomGuessCombinedAlgorithmTest {
@@ -10,17 +12,18 @@ internal class RandomGuessCombinedAlgorithmTest {
   @ParameterizedTest
   @MethodSource("difficultExamples")
   fun canSolveSimpleSudoku(example: List<List<Int>>) {
-    val sudoku = Sudoku(example)
+    val sudoku = Sudoku(example, HiddenPairPreAnalysis())
     try {
-      val compositeAlgorithm =
-        CompositeAlgorithm(
-          sudoku,
-          setOf(NakedSingleCellAlgorithm(sudoku), HiddenSingleCellAlgorithm(sudoku))
-        )
-      val algo = RandomGuessCombinedAlgorithm(sudoku, compositeAlgorithm)
+      val preAnalysis = HiddenPairPreAnalysis()
+      val compositeAlgorithm = CompositeAlgorithm(
+        preAnalysis,
+        setOf(NakedSingleCellAlgorithm(), HiddenSingleCellAlgorithm())
+      )
+
+      val algo = RandomGuessCombinedAlgorithm(compositeAlgorithm)
 
       val time = measureTimeMillis {
-        algo.trySolve()
+        algo.trySolve(sudoku)
       }
       println("Solved in $time milliseconds")
       sudoku.solvedCount shouldBe sudoku.size * sudoku.size

@@ -1,31 +1,32 @@
-package uk.co.inops.sudoku
+package uk.co.inops.sudoku.solvers
 
+import uk.co.inops.sudoku.Cell
+import uk.co.inops.sudoku.Sudoku
 import java.util.Deque
 import kotlin.random.Random
 
 class RandomGuessCombinedAlgorithm(
-  private val sudoku: Sudoku,
-  private val helperAlgorithm: Algorithm
+  private val solverAlgorithm: Algorithm
 ) : Algorithm {
 
   private val guessedCells: Deque<Cell> = java.util.ArrayDeque()
 
-  override fun trySolve(): Boolean {
+  override fun trySolve(sudoku: Sudoku): Boolean {
     var i = 0
     var guessCount = 0
     while (!sudoku.hasBeenSolved() && i++ < 100000) {
-      helperAlgorithm.trySolve()
+      solverAlgorithm.trySolve(sudoku)
       if (sudoku.hasBeenSolved()) {
         break
       }
 
       var rolledBack = false
       do {
-        val currentCell = getCellToGuess(rolledBack)
+        val currentCell = getCellToGuess(sudoku, rolledBack)
         rolledBack = false
         if (currentCell == null) {
           //println("No cells left to guess, rolling back.")
-          rollback()
+          rollback(sudoku)
           rolledBack = true
           continue
         }
@@ -38,7 +39,7 @@ class RandomGuessCombinedAlgorithm(
 
         if (sudoku.hasConflict) {
           //println("Rolling back after conflict. Current cells solved: ${sudoku.solvedCount}")
-          rollback()
+          rollback(sudoku)
           //println("Rolled back after conflict. Current cells solved: ${sudoku.solvedCount}")
           rolledBack = true
         }
@@ -51,20 +52,20 @@ class RandomGuessCombinedAlgorithm(
     return true
   }
 
-  private fun rollback() {
-      val history = sudoku.endHistory()
-      while (history.isNotEmpty()) {
-        history.pop().also {
-          it.reset()
-        }
+  private fun rollback(sudoku: Sudoku) {
+    val history = sudoku.endHistory()
+    while (history.isNotEmpty()) {
+      history.pop().also {
+        it.reset()
       }
+    }
 
     if (guessedCells.size > 0) {
       val lastGuessedCell = guessedCells.peek()
       if (lastGuessedCell.currentGuessIndex >= lastGuessedCell.possibleValues.size - 1) {
         guessedCells.pop().also { it.currentGuessIndex = -1 }
         if (sudoku.hasHistory()) {
-          rollback() // rollback again as there isn't any numbers left to guess in the last one
+          rollback(sudoku) // rollback again as there isn't any numbers left to guess in the last one
         }
       }
     }
@@ -72,7 +73,7 @@ class RandomGuessCombinedAlgorithm(
     sudoku.hasConflict = false
   }
 
-  private fun getCellToGuess(conflict: Boolean): Cell? {
+  private fun getCellToGuess(sudoku: Sudoku, conflict: Boolean): Cell? {
 
     val lastGuessedCell: Cell? = guessedCells.peek()
     if (conflict && lastGuessedCell != null && lastGuessedCell.value == 0 && lastGuessedCell.currentGuessIndex < lastGuessedCell.possibleValues.size - 1) {

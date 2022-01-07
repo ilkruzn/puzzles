@@ -1,21 +1,26 @@
-package uk.co.inops.sudoku
+package uk.co.inops.sudoku.solvers
 
-class HiddenSingleCellAlgorithm(private val sudoku: Sudoku) : Algorithm {
+import uk.co.inops.sudoku.Cell
+import uk.co.inops.sudoku.Sudoku
 
-  override fun trySolve(): Boolean {
+class HiddenSingleCellAlgorithm() : Algorithm {
+
+  override fun trySolve(sudoku: Sudoku): Boolean {
     do {
       val currentSolvedCount = sudoku.solvedCount
       (1..sudoku.size).forEach { value ->
-        sudoku.rows.forEach { row -> findCellAndSet(value, row) }
-        sudoku.columns.forEach { col -> findCellAndSet(value, col) }
-        sudoku.boxes.forEach { box -> findCellAndSet(value, box) }
+        with(sudoku) {
+          rows.forEach { row -> findCellAndSet(sudoku, value, row) }
+          columns.forEach { col -> findCellAndSet(sudoku, value, col) }
+          boxes.forEach { box -> findCellAndSet(sudoku, value, box) }
+        }
       }
     } while (sudoku.solvedCount > currentSolvedCount && !sudoku.hasBeenSolved())
 
     return sudoku.hasBeenSolved()
   }
 
-  private fun findCellAndSet(value: Int, group: List<Cell>) {
+  private fun findCellAndSet(sudoku: Sudoku, value: Int, group: List<Cell>) {
     val cells = mutableListOf<Cell>()
     group.forEach { currentCell ->
       if (currentCell.possibleValues.contains(value)) {
