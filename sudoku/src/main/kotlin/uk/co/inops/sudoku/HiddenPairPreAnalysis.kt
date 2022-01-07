@@ -21,23 +21,26 @@ class HiddenPairPreAnalysis : PreAnalysis {
       }
     }
 
-    if (valueMap.size < 2) return
+    if (valueMap.size < pairCount) return
 
-    valueMap.forEach { entry ->
+    val processed = mutableSetOf<Int>()
+    for (entry in valueMap) {
+
+      if (entry.key in processed) continue
+
       val pair1 = entry.key
+      processed.add(pair1)
       val otherPairs = valueMap
         .filter { it.key != entry.key && it.value.intersect(entry.value).size == pairCount }
         .map { it.key }
 
       if (otherPairs.size == pairCount - 1) {
         valueMap[pair1]?.forEach { cell ->
-          cell.possibleValues.removeIf {
-            it != pair1 && !otherPairs.contains(
-              it
-            )
-          }
+          cell.possibleValues.removeIf { it != pair1 && !otherPairs.contains(it) }
         }
       }
+
+      processed.addAll(otherPairs)
     }
   }
 }
