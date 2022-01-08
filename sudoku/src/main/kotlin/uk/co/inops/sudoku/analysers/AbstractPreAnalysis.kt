@@ -6,9 +6,9 @@ abstract class AbstractPreAnalysis : PreAnalysis {
   override fun analyse(sudoku: Sudoku): Boolean {
     var result = false
     with(sudoku) {
-      rows.forEach { result = result || analyseGroup(it) }
-      columns.forEach { result = result || analyseGroup(it) }
-      boxes.forEach { result = result || analyseGroup(it) }
+      rows.indices.forEach { result = result || analyseRow(sudoku, it) }
+      columns.indices.forEach { result = result || analyseColumn(sudoku, it) }
+      boxes.forEach { result = result || analyseBox(it.first()) }
     }
     return result
   }

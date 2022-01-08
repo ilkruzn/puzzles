@@ -51,20 +51,23 @@ class RandomGuessCombinedWithOtherSolvers(
         }
 
       } while (rolledBack)
-    }
 
-    println("Solved in $i iterations")
+      preAnalysis.analyse(sudoku)
+    }
+//
+//    println("Solved in $i iterations")
     println("Guess count: $guessCount")
     return true
   }
 
   private fun setCellValue(currentCell: Cell, sudoku: Sudoku) {
-    val value = currentCell.possibleValues.elementAt(currentCell.currentGuessIndex)
+    val value = currentCell.possibleValues.first { !currentCell.guessed.contains(it) }
     //        println("Guessing number $value in cell [${currentCell.row}, ${currentCell.col}]. Possible values: ${currentCell.possibleValues}, index: ${currentCell.currentGuessIndex}")
     sudoku.set(currentCell.row, currentCell.col, value)
-//    this.preAnalysis.analyseGroup(sudoku.rows[currentCell.row])
-//    this.preAnalysis.analyseGroup(sudoku.columns[currentCell.col])
-//    this.preAnalysis.analyseGroup(currentCell.box)
+    currentCell.guessed.add(value)
+//    preAnalysis.analyseRow(sudoku, currentCell.row)
+//    preAnalysis.analyseColumn(sudoku, currentCell.col)
+//    preAnalysis.analyseBox(currentCell)
   }
 
   private fun rollback(sudoku: Sudoku) {
@@ -77,8 +80,8 @@ class RandomGuessCombinedWithOtherSolvers(
 
     if (guessedCells.size > 0) {
       val lastGuessedCell = guessedCells.peek()
-      if (lastGuessedCell.currentGuessIndex >= lastGuessedCell.possibleValues.size - 1) {
-        guessedCells.pop().also { it.currentGuessIndex = -1 }
+      if (lastGuessedCell.guessed.size == lastGuessedCell.possibleValues.size) {
+        guessedCells.pop().also { it.guessed.clear() }
         if (sudoku.hasHistory()) {
           rollback(sudoku) // rollback again as there isn't any numbers left to guess in the last one
         }
@@ -91,8 +94,7 @@ class RandomGuessCombinedWithOtherSolvers(
   private fun getCellToGuess(sudoku: Sudoku, conflict: Boolean): Cell? {
 
     val lastGuessedCell: Cell? = guessedCells.peek()
-    if (conflict && lastGuessedCell != null && lastGuessedCell.currentGuessIndex < lastGuessedCell.possibleValues.size - 1) {
-      lastGuessedCell.currentGuessIndex++
+    if (conflict && lastGuessedCell != null && lastGuessedCell.guessed.size < lastGuessedCell.possibleValues.size) {
       return lastGuessedCell
     }
 
@@ -101,11 +103,11 @@ class RandomGuessCombinedWithOtherSolvers(
         it.filter { cell ->
           !guessedCells.contains(cell)
                   && cell.value == 0
-                  && cell.currentGuessIndex < cell.possibleValues.size - 1
+                  && cell.guessed.size < cell.possibleValues.size
                   && cell.possibleValues.size > 1
         }
       }
-      .sortedBy { it.possibleValues.size - it.currentGuessIndex }
+      .sortedBy { it.possibleValues.size - it.guessed.size }
       .take(3)
 
     if (allEmptyCells.isEmpty()) {
@@ -115,7 +117,6 @@ class RandomGuessCombinedWithOtherSolvers(
     val emptyCell = allEmptyCells[Random.nextInt(allEmptyCells.size)]
 
     return emptyCell.also {
-      it.currentGuessIndex++
       guessedCells.push(it)
     }
   }

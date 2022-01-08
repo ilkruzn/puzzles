@@ -8,6 +8,7 @@ import uk.co.inops.sudoku.Sudoku
 import uk.co.inops.sudoku.analysers.CompositeAnalysis
 import uk.co.inops.sudoku.analysers.HiddenPairPreAnalysis
 import uk.co.inops.sudoku.analysers.NakedPairPreAnalysis
+import uk.co.inops.sudoku.analysers.PointingPairPreAnalysis
 import kotlin.system.measureTimeMillis
 
 internal class RandomGuessCombinedWithOtherSolversTest {
@@ -16,7 +17,13 @@ internal class RandomGuessCombinedWithOtherSolversTest {
   @MethodSource("difficultExamples")
   fun canSolveSimpleSudoku(example: List<List<Int>>) {
     val compositeAnalysis =
-      CompositeAnalysis(setOf(NakedPairPreAnalysis(), HiddenPairPreAnalysis()))
+      CompositeAnalysis(
+        setOf(
+          NakedPairPreAnalysis(),
+          HiddenPairPreAnalysis(),
+          PointingPairPreAnalysis()
+        )
+      )
     val compositeAlgorithm = CompositeAlgorithm(
       setOf(NakedSingleCellAlgorithm(), HiddenSingleCellAlgorithm())
     )
@@ -41,7 +48,14 @@ internal class RandomGuessCombinedWithOtherSolversTest {
   fun measureSpeed() {
     val example = difficultExamples()[7]
     val compositeAnalysis =
-      CompositeAnalysis(setOf(NakedPairPreAnalysis(), HiddenPairPreAnalysis()))
+      CompositeAnalysis(
+        setOf(
+          NakedPairPreAnalysis(),
+          HiddenPairPreAnalysis(),
+          PointingPairPreAnalysis()
+        )
+      )
+
     val compositeAlgorithm = CompositeAlgorithm(
       setOf(NakedSingleCellAlgorithm(), HiddenSingleCellAlgorithm())
     )

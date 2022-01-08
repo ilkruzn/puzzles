@@ -5,7 +5,6 @@ class Cell(val row: Int, val col: Int, private val sudoku: Sudoku) {
   lateinit var box: List<Cell>
   private var previousValue = 0
 
-  var currentGuessIndex = -1
   val down: Cell by lazy { sudoku.rows[(row + 1) % sudoku.size][col] }
   val right: Cell by lazy { sudoku.rows[row][(col + 1) % sudoku.size] }
   val boxNext: Cell by lazy {
@@ -26,6 +25,7 @@ class Cell(val row: Int, val col: Int, private val sudoku: Sudoku) {
   }
 
   private val initialPossibleValues = (1..sudoku.size).shuffled()
+  val guessed = mutableSetOf<Int>()
   val possibleValues: MutableSet<Int> by lazy { initialPossibleValues.toMutableSet() }
   internal var value: Int = 0
     set(value) {
