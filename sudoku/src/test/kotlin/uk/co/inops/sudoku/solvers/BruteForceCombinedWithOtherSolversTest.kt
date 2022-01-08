@@ -11,7 +11,7 @@ import uk.co.inops.sudoku.analysers.NakedPairPreAnalysis
 import uk.co.inops.sudoku.analysers.PointingPairPreAnalysis
 import kotlin.system.measureTimeMillis
 
-internal class RandomGuessCombinedWithOtherSolversTest {
+internal class BruteForceCombinedWithOtherSolversTest {
 
   @ParameterizedTest
   @MethodSource("difficultExamples")
@@ -28,7 +28,7 @@ internal class RandomGuessCombinedWithOtherSolversTest {
       setOf(NakedSingleCellAlgorithm(), HiddenSingleCellAlgorithm())
     )
     val sudoku = Sudoku(example)
-    val algo = RandomGuessCombinedWithOtherSolvers(compositeAlgorithm, compositeAnalysis)
+    val algo = BruteForceCombinedWithOtherSolvers(compositeAlgorithm, compositeAnalysis)
     try {
       val time = measureTimeMillis {
         algo.trySolve(sudoku)
@@ -59,7 +59,7 @@ internal class RandomGuessCombinedWithOtherSolversTest {
     val compositeAlgorithm = CompositeAlgorithm(
       setOf(NakedSingleCellAlgorithm(), HiddenSingleCellAlgorithm())
     )
-    val algo = RandomGuessCombinedWithOtherSolvers(compositeAlgorithm, compositeAnalysis)
+    val algo = BruteForceCombinedWithOtherSolvers(compositeAlgorithm, compositeAnalysis)
 
     val time = measureTimeMillis {
       repeat(100) {

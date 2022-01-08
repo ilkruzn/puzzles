@@ -6,7 +6,7 @@ import uk.co.inops.sudoku.analysers.PreAnalysis
 import java.util.Deque
 import kotlin.random.Random
 
-class RandomGuessCombinedWithOtherSolvers(
+class BruteForceCombinedWithOtherSolvers(
   private val solverAlgorithm: Algorithm,
   private val preAnalysis: PreAnalysis
 ) : Algorithm {
@@ -56,7 +56,7 @@ class RandomGuessCombinedWithOtherSolvers(
     }
 //
 //    println("Solved in $i iterations")
-    println("Guess count: $guessCount")
+//    println("Guess count: $guessCount")
     return true
   }
 

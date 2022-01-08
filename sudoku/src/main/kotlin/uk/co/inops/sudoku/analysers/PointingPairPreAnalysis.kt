@@ -26,7 +26,6 @@ class PointingPairPreAnalysis : AbstractPreAnalysis() {
     var result = false
     val first = cells.first()
     if (cells.all { it.row == first.row }) {
-      println("pointing pair of size ${cells.size} found")
       var current = first.right
       do {
         if (!cells.contains(current)) {
