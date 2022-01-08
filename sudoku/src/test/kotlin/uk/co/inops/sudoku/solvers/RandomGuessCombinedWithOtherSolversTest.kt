@@ -1,28 +1,32 @@
 package uk.co.inops.sudoku.solvers
 
 import io.kotest.matchers.shouldBe
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
-import uk.co.inops.sudoku.HiddenPairPreAnalysis
 import uk.co.inops.sudoku.Sudoku
+import uk.co.inops.sudoku.analysers.CompositeAnalysis
+import uk.co.inops.sudoku.analysers.HiddenPairPreAnalysis
+import uk.co.inops.sudoku.analysers.NakedPairPreAnalysis
 import kotlin.system.measureTimeMillis
 
-internal class RandomGuessCombinedAlgorithmTest {
+internal class RandomGuessCombinedWithOtherSolversTest {
 
   @ParameterizedTest
   @MethodSource("difficultExamples")
   fun canSolveSimpleSudoku(example: List<List<Int>>) {
-    val sudoku = Sudoku(example, HiddenPairPreAnalysis())
+    val compositeAnalysis =
+      CompositeAnalysis(setOf(NakedPairPreAnalysis(), HiddenPairPreAnalysis()))
+    val compositeAlgorithm = CompositeAlgorithm(
+      setOf(NakedSingleCellAlgorithm(), HiddenSingleCellAlgorithm())
+    )
+    val sudoku = Sudoku(example)
+    val algo = RandomGuessCombinedWithOtherSolvers(compositeAlgorithm, compositeAnalysis)
     try {
-      val compositeAlgorithm = CompositeAlgorithm(
-        setOf(NakedSingleCellAlgorithm(), HiddenSingleCellAlgorithm())
-      )
-
-      val algo = RandomGuessCombinedAlgorithm(compositeAlgorithm)
-
       val time = measureTimeMillis {
         algo.trySolve(sudoku)
       }
+
       println("Solved in $time milliseconds")
       sudoku.solvedCount shouldBe sudoku.size * sudoku.size
       sudoku.rows.all { row -> row.all { cell -> cell.possibleValues.isEmpty() } } shouldBe true
@@ -31,6 +35,27 @@ internal class RandomGuessCombinedAlgorithmTest {
       sudoku.print()
       throw e
     }
+  }
+
+  @Test
+  fun measureSpeed() {
+    val example = difficultExamples()[7]
+    val compositeAnalysis =
+      CompositeAnalysis(setOf(NakedPairPreAnalysis(), HiddenPairPreAnalysis()))
+    val compositeAlgorithm = CompositeAlgorithm(
+      setOf(NakedSingleCellAlgorithm(), HiddenSingleCellAlgorithm())
+    )
+    val algo = RandomGuessCombinedWithOtherSolvers(compositeAlgorithm, compositeAnalysis)
+
+    val time = measureTimeMillis {
+      repeat(100) {
+        val sudoku = Sudoku(example)
+        algo.trySolve(sudoku)
+      }
+    }
+
+    println("Total $time milliseconds")
+
   }
 
   companion object {

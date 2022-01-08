@@ -1,28 +1,10 @@
-package uk.co.inops.sudoku
+package uk.co.inops.sudoku.analysers
 
-class HiddenPairPreAnalysis : PreAnalysis {
+import uk.co.inops.sudoku.Cell
 
-  override fun analyse(sudoku: Sudoku) {
-    with(sudoku) {
-      rows.forEach(::analyse)
-      columns.forEach(::analyse)
-      boxes.forEach(::analyse)
-    }
-  }
+class HiddenPairPreAnalysis : AbstractPreAnalysis() {
 
-  override fun analyseRow(sudoku: Sudoku, row: Int) {
-    analyse(sudoku.rows[row])
-  }
-
-  override fun analyseColumn(sudoku: Sudoku, column: Int) {
-    analyse(sudoku.columns[column])
-  }
-
-  override fun analyseBox(box: List<Cell>) {
-    analyse(box)
-  }
-
-  private fun analyse(group: List<Cell>) {
+  override fun analyseGroup(group: List<Cell>): Boolean {
     // this can be a method parameter, but seems like trying for did not make the overall resolution time any faster
     val pairCount = 2
     val valueMap = mutableMapOf<Int, List<Cell>>()
@@ -33,8 +15,11 @@ class HiddenPairPreAnalysis : PreAnalysis {
       }
     }
 
-    if (valueMap.size < pairCount) return
+    if (valueMap.size < pairCount) {
+      return false
+    }
 
+    var found = false
     val processed = mutableSetOf<Int>()
     for (entry in valueMap) {
 
@@ -48,11 +33,13 @@ class HiddenPairPreAnalysis : PreAnalysis {
 
       if (otherPairs.size == pairCount - 1) {
         valueMap[pair1]?.forEach { cell ->
+          found = true
           cell.possibleValues.removeIf { it != pair1 && !otherPairs.contains(it) }
         }
       }
 
       processed.addAll(otherPairs)
     }
+    return found
   }
 }

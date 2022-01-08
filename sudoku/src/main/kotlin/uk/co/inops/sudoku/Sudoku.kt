@@ -4,21 +4,19 @@ import java.util.Deque
 
 
 class Sudoku(
-  val size: Int,
-  private val preAnalysis: PreAnalysis
+  val size: Int
 ) {
 
   private val history: Deque<Deque<Cell>> = java.util.ArrayDeque()
   var hasConflict = false
   var solvedCount = 0
 
-  constructor(initialValues: List<List<Int>>, preAnalysis: PreAnalysis) : this(9, preAnalysis) {
+  constructor(initialValues: List<List<Int>>) : this(9) {
     for (row in initialValues.indices) {
       for (col in initialValues[row].indices) {
-        set(row, col, initialValues[row][col], false)
+        set(row, col, initialValues[row][col])
       }
     }
-    preAnalysis.analyse(this)
   }
 
   private val totalCells = size * size
@@ -31,16 +29,9 @@ class Sudoku(
 
   fun hasBeenSolved() = solvedCount == totalCells
 
-  fun set(row: Int, col: Int, value: Int, preAnalysis: Boolean = true) {
+  fun set(row: Int, col: Int, value: Int) {
     val cell = rows[row][col]
     cell.value = value
-
-    if (preAnalysis) {
-      this.preAnalysis.analyseRow(this, row)
-      this.preAnalysis.analyseColumn(this, col)
-      this.preAnalysis.analyseBox(cell.box)
-    }
-
     if (history.isNotEmpty()) {
       history.peek().push(cell)
     }

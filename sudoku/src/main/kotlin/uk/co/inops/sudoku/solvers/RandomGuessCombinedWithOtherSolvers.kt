@@ -2,11 +2,13 @@ package uk.co.inops.sudoku.solvers
 
 import uk.co.inops.sudoku.Cell
 import uk.co.inops.sudoku.Sudoku
+import uk.co.inops.sudoku.analysers.PreAnalysis
 import java.util.Deque
 import kotlin.random.Random
 
-class RandomGuessCombinedAlgorithm(
-  private val solverAlgorithm: Algorithm
+class RandomGuessCombinedWithOtherSolvers(
+  private val solverAlgorithm: Algorithm,
+  private val preAnalysis: PreAnalysis
 ) : Algorithm {
 
   private val guessedCells: Deque<Cell> = java.util.ArrayDeque()
@@ -14,10 +16,16 @@ class RandomGuessCombinedAlgorithm(
   override fun trySolve(sudoku: Sudoku): Boolean {
     var i = 0
     var guessCount = 0
+    preAnalysis.analyse(sudoku)
     while (!sudoku.hasBeenSolved() && i++ < 100000) {
+      val solvedCount = sudoku.solvedCount
       solverAlgorithm.trySolve(sudoku)
       if (sudoku.hasBeenSolved()) {
         break
+      }
+
+      if (solvedCount < sudoku.solvedCount && preAnalysis.analyse(sudoku)) {
+        continue
       }
 
       var rolledBack = false
@@ -32,9 +40,7 @@ class RandomGuessCombinedAlgorithm(
         }
 
         sudoku.beginHistory()
-        val value = currentCell.possibleValues.elementAt(currentCell.currentGuessIndex)
-//        println("Guessing number $value in cell [${currentCell.row}, ${currentCell.col}]. Possible values: ${currentCell.possibleValues}, index: ${currentCell.currentGuessIndex}")
-        sudoku.set(currentCell.row, currentCell.col, value)
+        setCellValue(currentCell, sudoku)
         guessCount++
 
         if (sudoku.hasConflict) {
@@ -50,6 +56,15 @@ class RandomGuessCombinedAlgorithm(
     println("Solved in $i iterations")
     println("Guess count: $guessCount")
     return true
+  }
+
+  private fun setCellValue(currentCell: Cell, sudoku: Sudoku) {
+    val value = currentCell.possibleValues.elementAt(currentCell.currentGuessIndex)
+    //        println("Guessing number $value in cell [${currentCell.row}, ${currentCell.col}]. Possible values: ${currentCell.possibleValues}, index: ${currentCell.currentGuessIndex}")
+    sudoku.set(currentCell.row, currentCell.col, value)
+//    this.preAnalysis.analyseGroup(sudoku.rows[currentCell.row])
+//    this.preAnalysis.analyseGroup(sudoku.columns[currentCell.col])
+//    this.preAnalysis.analyseGroup(currentCell.box)
   }
 
   private fun rollback(sudoku: Sudoku) {
@@ -76,7 +91,7 @@ class RandomGuessCombinedAlgorithm(
   private fun getCellToGuess(sudoku: Sudoku, conflict: Boolean): Cell? {
 
     val lastGuessedCell: Cell? = guessedCells.peek()
-    if (conflict && lastGuessedCell != null && lastGuessedCell.value == 0 && lastGuessedCell.currentGuessIndex < lastGuessedCell.possibleValues.size - 1) {
+    if (conflict && lastGuessedCell != null && lastGuessedCell.currentGuessIndex < lastGuessedCell.possibleValues.size - 1) {
       lastGuessedCell.currentGuessIndex++
       return lastGuessedCell
     }
