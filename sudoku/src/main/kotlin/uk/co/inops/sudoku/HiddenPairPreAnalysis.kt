@@ -18,8 +18,8 @@ class HiddenPairPreAnalysis : PreAnalysis {
     analyse(sudoku.columns[column])
   }
 
-  override fun analyseBox(sudoku: Sudoku, box: Int) {
-    analyse(sudoku.boxes[box])
+  override fun analyseBox(box: List<Cell>) {
+    analyse(box)
   }
 
   private fun analyse(group: List<Cell>) {

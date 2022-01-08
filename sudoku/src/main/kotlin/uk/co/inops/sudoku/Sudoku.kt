@@ -11,7 +11,6 @@ class Sudoku(
   private val history: Deque<Deque<Cell>> = java.util.ArrayDeque()
   var hasConflict = false
   var solvedCount = 0
-    internal set
 
   constructor(initialValues: List<List<Int>>, preAnalysis: PreAnalysis) : this(9, preAnalysis) {
     for (row in initialValues.indices) {
@@ -33,16 +32,17 @@ class Sudoku(
   fun hasBeenSolved() = solvedCount == totalCells
 
   fun set(row: Int, col: Int, value: Int, preAnalysis: Boolean = true) {
-    rows[row][col].value = value
+    val cell = rows[row][col]
+    cell.value = value
 
     if (preAnalysis) {
-//      this.preAnalysis.analyse(this)
       this.preAnalysis.analyseRow(this, row)
       this.preAnalysis.analyseColumn(this, col)
+      this.preAnalysis.analyseBox(cell.box)
     }
 
     if (history.isNotEmpty()) {
-      history.peek().push(rows[row][col])
+      history.peek().push(cell)
     }
   }
 
@@ -73,6 +73,7 @@ class Sudoku(
       var current = top
       do {
         box.add(current)
+        current.box = box
         current = current.boxNext
       } while (top != current)
       box

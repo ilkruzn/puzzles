@@ -2,6 +2,7 @@ package uk.co.inops.sudoku
 
 class Cell(val row: Int, val col: Int, private val sudoku: Sudoku) {
 
+  lateinit var box: List<Cell>
   private var previousValue = 0
 
   var currentGuessIndex = -1

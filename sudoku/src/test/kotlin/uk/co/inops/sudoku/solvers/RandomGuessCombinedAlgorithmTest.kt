@@ -14,9 +14,7 @@ internal class RandomGuessCombinedAlgorithmTest {
   fun canSolveSimpleSudoku(example: List<List<Int>>) {
     val sudoku = Sudoku(example, HiddenPairPreAnalysis())
     try {
-      val preAnalysis = HiddenPairPreAnalysis()
       val compositeAlgorithm = CompositeAlgorithm(
-        preAnalysis,
         setOf(NakedSingleCellAlgorithm(), HiddenSingleCellAlgorithm())
       )
 
