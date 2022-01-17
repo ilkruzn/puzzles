@@ -72,12 +72,15 @@ class Sudoku(
   }
 
 
-  fun print() {
+  fun print(newLineAfterRow: Boolean = true) {
     for (row in rows) {
       for (cell in row) {
-        print("${cell.value} ")
+        val print = if (cell.value == 0) " " else cell.value
+        print("$print")
       }
-      println()
+      if (newLineAfterRow) {
+        println()
+      }
     }
   }
 

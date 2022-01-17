@@ -29,6 +29,8 @@ class Cell(val row: Int, val col: Int, private val sudoku: Sudoku) {
   val possibleValues: MutableSet<Int> by lazy { initialPossibleValues.toMutableSet() }
   internal var value: Int = 0
     set(value) {
+      if (value == field) return
+
       previousValue = field
       field = value
       recalculate()

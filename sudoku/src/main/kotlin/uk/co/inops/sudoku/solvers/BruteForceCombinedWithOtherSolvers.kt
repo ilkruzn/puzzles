@@ -2,6 +2,9 @@ package uk.co.inops.sudoku.solvers
 
 import uk.co.inops.sudoku.Cell
 import uk.co.inops.sudoku.Sudoku
+import uk.co.inops.sudoku.analysers.CompositeAnalysis
+import uk.co.inops.sudoku.analysers.HiddenPairPreAnalysis
+import uk.co.inops.sudoku.analysers.NakedPairPreAnalysis
 import uk.co.inops.sudoku.analysers.PreAnalysis
 import java.util.Deque
 import kotlin.random.Random
@@ -10,6 +13,11 @@ class BruteForceCombinedWithOtherSolvers(
   private val solverAlgorithm: Algorithm,
   private val preAnalysis: PreAnalysis
 ) : Algorithm {
+
+  constructor() : this(
+    CompositeAlgorithm(setOf(NakedSingleCellAlgorithm(), HiddenSingleCellAlgorithm())),
+    CompositeAnalysis(setOf(NakedPairPreAnalysis(), HiddenPairPreAnalysis()))
+  )
 
   private val guessedCells: Deque<Cell> = java.util.ArrayDeque()
 
@@ -102,9 +110,9 @@ class BruteForceCombinedWithOtherSolvers(
       .flatMap {
         it.filter { cell ->
           !guessedCells.contains(cell)
-                  && cell.value == 0
-                  && cell.guessed.size < cell.possibleValues.size
-                  && cell.possibleValues.size > 1
+              && cell.value == 0
+              && cell.guessed.size < cell.possibleValues.size
+              && cell.possibleValues.size > 1
         }
       }
       .sortedBy { it.possibleValues.size - it.guessed.size }
